@@ -108,6 +108,46 @@ document.addEventListener('DOMContentLoaded', () => {
       applyPositions();
     }
 
+    // Carousel dots for mobile
+    const dotsContainer = document.createElement('div');
+    dotsContainer.className = 'founders__dots';
+    foundersGrid.parentNode.appendChild(dotsContainer);
+
+    cards.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'founders__dot';
+      dot.setAttribute('aria-label', `Fondateur ${i + 1}`);
+      dot.addEventListener('click', () => {
+        clearInterval(timer);
+        // Set positions so card i is at center (pos 1)
+        positions = cards.length === 3
+          ? [(3 - i + 0) % 3, (3 - i + 1) % 3, (3 - i + 2) % 3].map((_, idx) => (idx - i + 3) % 3)
+          : positions;
+        // Direct assignment for 3 cards
+        positions = [];
+        for (let j = 0; j < cards.length; j++) {
+          positions.push((j - i + 3) % 3);
+        }
+        applyPositions();
+        updateDots();
+        timer = setInterval(rotate, 3000);
+      });
+      dotsContainer.appendChild(dot);
+    });
+
+    function updateDots() {
+      const dots = dotsContainer.querySelectorAll('.founders__dot');
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('founders__dot--active', positions[i] === 1);
+      });
+    }
+
+    const origApply = applyPositions;
+    applyPositions = function() {
+      origApply();
+      updateDots();
+    };
+
     // Init
     applyPositions();
 
@@ -116,6 +156,43 @@ document.addEventListener('DOMContentLoaded', () => {
     foundersGrid.addEventListener('mouseenter', () => clearInterval(timer));
     foundersGrid.addEventListener('mouseleave', () => {
       timer = setInterval(rotate, 3000);
+    });
+
+    // Touch swipe support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    foundersGrid.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      clearInterval(timer);
+    }, { passive: true });
+
+    foundersGrid.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          rotate(); // swipe left = next
+        } else {
+          positions = positions.map(p => (p + 1) % 3); // swipe right = prev
+          applyPositions();
+        }
+      }
+      timer = setInterval(rotate, 3000);
+    }, { passive: true });
+  }
+
+  /* ---------- Gallery pagination on mobile ---------- */
+  const gallery = document.querySelector('.gallery');
+  if (gallery) {
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'gallery-toggle';
+    toggleBtn.textContent = 'Voir plus';
+    gallery.insertAdjacentElement('afterend', toggleBtn);
+
+    toggleBtn.addEventListener('click', () => {
+      const expanded = gallery.classList.toggle('gallery--expanded');
+      toggleBtn.textContent = expanded ? 'Voir moins' : 'Voir plus';
     });
   }
 

@@ -38,6 +38,7 @@ body {
   background: var(--white);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 img {
@@ -633,6 +634,56 @@ h1, h2, h3, h4 {
   line-height: 1.6;
 }
 
+/* Gallery pagination toggle */
+.gallery-toggle {
+  display: none;
+  margin: 0 auto 0;
+  padding: 10px 28px;
+  background: var(--green-medium);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.gallery-toggle:hover {
+  background: var(--green-dark);
+}
+
+@media (max-width: 768px) {
+  .gallery-toggle {
+    margin-bottom: 40px;
+  }
+}
+
+/* Founders carousel dots */
+.founders__dots {
+  display: none;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.founders__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--green-medium);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition);
+}
+
+.founders__dot--active {
+  background: var(--green-medium);
+  transform: scale(1.2);
+}
+
 /* ========================================
    CONTACT
    ======================================== */
@@ -878,8 +929,17 @@ h1, h2, h3, h4 {
 }
 
 /* ========================================
-   RESPONSIVE — TABLET (768px)
+   RESPONSIVE
    ======================================== */
+
+/* ---------- Large desktop (1440px+) ---------- */
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1320px;
+  }
+}
+
+/* ---------- Tablet landscape (1024px) ---------- */
 @media (max-width: 1024px) {
   .cards--three {
     grid-template-columns: repeat(2, 1fr);
@@ -897,11 +957,16 @@ h1, h2, h3, h4 {
     gap: 16px;
   }
 
+  .founder-card {
+    flex: 0 0 32%;
+  }
+
   .footer__inner {
     grid-template-columns: 1fr 1fr;
   }
 }
 
+/* ---------- Tablet portrait / small laptop (768px) ---------- */
 @media (max-width: 768px) {
   /* Nav mobile */
   .navbar__toggle {
@@ -914,10 +979,12 @@ h1, h2, h3, h4 {
     right: -100%;
     width: 280px;
     height: 100vh;
+    height: 100dvh;
     background: var(--green-dark);
     padding: 80px 30px 30px;
     transition: right var(--transition);
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
   }
 
   .navbar__nav--open {
@@ -945,6 +1012,10 @@ h1, h2, h3, h4 {
     padding: 70px 0;
   }
 
+  .section__header {
+    margin-bottom: 40px;
+  }
+
   .hero__content {
     padding: 100px 20px 60px;
   }
@@ -954,11 +1025,21 @@ h1, h2, h3, h4 {
   }
 
   .cards--grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
   }
 
   .gallery {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+  }
+
+  /* Hide gallery items beyond 3 rows (1 col = 3 items) */
+  .gallery:not(.gallery--expanded) .gallery__item:nth-child(n+4) {
+    display: none;
+  }
+
+  .gallery-toggle {
+    display: block;
   }
 
   .stats {
@@ -979,30 +1060,36 @@ h1, h2, h3, h4 {
     padding: 30px 20px;
   }
 
+  /* Founders — section padding + single card visible */
+  .fondateurs.section {
+    padding: 40px 0;
+  }
+
   .founders {
     gap: 10px;
+    overflow: hidden;
+    position: relative;
   }
 
   .founder-card {
-    flex: 0 0 32%;
+    min-width: 0;
   }
 
-  .founder-card__details {
-    padding: 16px;
+  .founder-card:not([data-pos="1"]) {
+    display: none;
   }
 
-  .founder-card__name {
-    font-size: 1.05rem;
+  .founder-card[data-pos="1"] {
+    flex: 0 0 100%;
+    transform: scale(1);
+    margin: 16px 0 24px;
   }
 
-  .founder-card__role {
-    font-size: 0.8rem;
+  .founders__dots {
+    display: flex;
   }
 
-  .founder-card__bio {
-    font-size: 0.78rem;
-  }
-
+  /* Footer */
   .footer__inner {
     grid-template-columns: 1fr;
     gap: 30px;
@@ -1011,10 +1098,15 @@ h1, h2, h3, h4 {
 
   .footer__brand p {
     max-width: 100%;
+    margin: 0 auto;
   }
 
   .footer__social-icons {
     justify-content: center;
+  }
+
+  .footer__links ul {
+    align-items: center;
   }
 
   .ferme-process {
@@ -1031,5 +1123,214 @@ h1, h2, h3, h4 {
   .whatsapp-float svg {
     width: 26px;
     height: 26px;
+  }
+
+  /* Map responsive */
+  .contact-map iframe {
+    height: 220px;
+  }
+}
+
+/* ---------- Small phones (480px) ---------- */
+@media (max-width: 480px) {
+  html {
+    scroll-padding-top: 70px;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 100svh;
+  }
+
+  .hero__content {
+    padding: 90px 16px 50px;
+  }
+
+  .hero__subtitle {
+    margin-bottom: 30px;
+  }
+
+  .hero__buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero__buttons .btn {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  /* Sections */
+  .section {
+    padding: 50px 0;
+  }
+
+  .section__header {
+    margin-bottom: 30px;
+  }
+
+  .section__intro {
+    font-size: 0.95rem;
+  }
+
+  /* Cards */
+  .card {
+    padding: 30px 20px;
+  }
+
+  .cards--grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .product-card__img {
+    height: 180px;
+  }
+
+  .product-card__body {
+    padding: 18px;
+  }
+
+  /* Gallery — 1 column on small phones */
+  .gallery {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .gallery__caption {
+    font-size: 0.8rem;
+    padding: 8px;
+  }
+
+  /* Stats */
+  .stats {
+    gap: 12px;
+  }
+
+  .stat {
+    padding: 20px 12px;
+  }
+
+  .stat__number {
+    font-size: 1.8rem;
+  }
+
+  .stat__suffix {
+    font-size: 1.4rem;
+  }
+
+  .stat__label {
+    font-size: 0.8rem;
+  }
+
+  /* Founders — tighter section padding */
+  .fondateurs.section {
+    padding: 30px 0;
+  }
+
+  /* Contact */
+  .contact-form {
+    padding: 24px 16px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+
+  .contact-map iframe {
+    height: 200px;
+  }
+
+  /* Footer */
+  .footer {
+    padding-top: 40px;
+  }
+
+  .footer__inner {
+    gap: 24px;
+    padding-bottom: 30px;
+  }
+
+  .footer__bottom {
+    padding: 16px 0;
+    font-size: 0.8rem;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+  }
+
+  .btn--small {
+    padding: 8px 20px;
+    font-size: 0.85rem;
+  }
+
+  /* Navbar */
+  .navbar__nav {
+    width: 100%;
+    padding: 80px 24px 24px;
+  }
+
+  .navbar__logo {
+    font-size: 1.2rem;
+  }
+
+  .navbar__logo img {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Ferme process */
+  .ferme-process {
+    padding: 24px 16px;
+  }
+
+  .ferme-process h3 {
+    font-size: 1.1rem;
+  }
+
+  .ferme-process p {
+    font-size: 0.9rem;
+  }
+
+  /* WhatsApp */
+  .whatsapp-float {
+    bottom: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .whatsapp-float svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* ---------- Very small phones (360px) ---------- */
+@media (max-width: 360px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat__number {
+    font-size: 2rem;
+  }
+
+  .navbar__logo span {
+    font-size: 1rem;
   }
 }
