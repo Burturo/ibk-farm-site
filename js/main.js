@@ -108,6 +108,32 @@ document.addEventListener('DOMContentLoaded', () => {
       applyPositions();
     }
 
+    // Carousel arrows for mobile
+    const arrowsContainer = document.createElement('div');
+    arrowsContainer.className = 'founders__arrows';
+    arrowsContainer.innerHTML = `
+      <button class="founders__arrow founders__arrow--prev" aria-label="Précédent">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="founders__arrow founders__arrow--next" aria-label="Suivant">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+      </button>
+    `;
+    foundersGrid.appendChild(arrowsContainer);
+
+    arrowsContainer.querySelector('.founders__arrow--next').addEventListener('click', () => {
+      clearInterval(timer);
+      rotate();
+      timer = setInterval(rotate, 3000);
+    });
+
+    arrowsContainer.querySelector('.founders__arrow--prev').addEventListener('click', () => {
+      clearInterval(timer);
+      positions = positions.map(p => (p + 1) % 3);
+      applyPositions();
+      timer = setInterval(rotate, 3000);
+    });
+
     // Carousel dots for mobile
     const dotsContainer = document.createElement('div');
     dotsContainer.className = 'founders__dots';
